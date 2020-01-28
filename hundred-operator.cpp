@@ -15,10 +15,6 @@
 #include <string>
 #include <unordered_map>
 
-// This app is a 100 operator FM synth. Each operator's gain and frequency are randomly generated with an exponental distribution.
-// Frequencies range from DC up to 20kHz so some operators can function as LFOs. This can lead to very complex modulations between operators
-// The values are dumped out in CSV format.
-
 int main(int argc, char *argv[]) {
   using namespace std::experimental;
 

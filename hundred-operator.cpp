@@ -9,13 +9,13 @@
 #include <vector>
 #include <algorithm>
 #include <numeric>
-#include <cstdlib>
-#include <ctime>
+#include <random>
 #include <iostream>
 
-#include <random>
 
-// This example app plays a sine wave of a given frequency for 5 seconds.
+// This app is a 100 operator FM synth. Each operator's gain and frequency are randomly generated with an exponental distribution.
+// Frequencies range from DC up to 20kHz so some operators can function as LFOs. This can lead to very complex modulations between operators
+// The values are dumped out in CSV format.
 
 int main() {
   using namespace std::experimental;
@@ -27,20 +27,18 @@ int main() {
 
   std::srand(std::time(nullptr));
 
-
   std::vector<float> frequency_hz(100);
   std::vector<float> gains(frequency_hz.size());
 
-  std::default_random_engine freqGenerator;
-  std::uniform_real_distribution<float> freqDistribution(0.1,10000.0);
+  std::random_device rd; 
+  std::mt19937 gen(rd()); 
+  std::exponential_distribution<float> freqDis(8.0);
+  std::exponential_distribution<float> gainDis(1.5);
 
-  std::generate(frequency_hz.begin(), frequency_hz.end(), [=](){
-    return static_cast <float> (std::rand() % 10000 * 8) / 8.0f;
-  });
-
-  std::generate(gains.begin(), gains.end(), [](){
-    return static_cast <float> (std::rand()) / static_cast <float> (RAND_MAX);
-  });
+  for (size_t i = 0; i < frequency_hz.size(); i++) {
+    frequency_hz.at(i) = freqDis(gen) * 20000.0f;
+    gains.at(i) = gainDis(gen);
+  } 
 
   std::cout << "Frequency, Gain\n";
   for (size_t i = 0; i < frequency_hz.size(); i++) {
@@ -81,5 +79,5 @@ int main() {
   });
 
   device->start();
-  std::this_thread::sleep_for(std::chrono::seconds(45));
+  std::this_thread::sleep_for(std::chrono::seconds(5));
 }

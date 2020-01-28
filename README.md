@@ -1,4 +1,4 @@
-# hundred-operator
+# Hundred Operator
 Randomized 100 operator FM synth.
 
 Using the experimental proposed standard C++ audio library.

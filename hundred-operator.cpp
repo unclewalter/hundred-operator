@@ -5,35 +5,57 @@
 #include <cmath>
 #include <thread>
 #include <audio>
-#include <cmath>
+
 #include <vector>
 #include <algorithm>
 #include <numeric>
 #include <random>
-#include <iostream>
 
+#include <iostream>
+#include <string>
+#include <unordered_map>
 
 // This app is a 100 operator FM synth. Each operator's gain and frequency are randomly generated with an exponental distribution.
 // Frequencies range from DC up to 20kHz so some operators can function as LFOs. This can lead to very complex modulations between operators
 // The values are dumped out in CSV format.
 
-int main() {
+int main(int argc, char *argv[]) {
   using namespace std::experimental;
 
+  unsigned duration = 5;
+  float frequencySkew = 8.0;
+  float gainSkew = 1.5;
   auto device = get_default_audio_output_device();
   if (!device)
     return 1;
 
-
-  std::srand(std::time(nullptr));
+  if (argc > 0) {
+    for (int i = 0; i < argc; i++)
+    {
+      switch (i)
+      {
+      case 1:
+        duration = atoi(argv[i]);
+        break;
+      case 2: 
+        frequencySkew = atof(argv[i]);
+        break;
+      case 3:
+        gainSkew = atof(argv[i]);
+      default:
+        break;
+      }
+    }
+    
+  }
 
   std::vector<float> frequency_hz(100);
   std::vector<float> gains(frequency_hz.size());
 
   std::random_device rd; 
   std::mt19937 gen(rd()); 
-  std::exponential_distribution<float> freqDis(8.0);
-  std::exponential_distribution<float> gainDis(1.5);
+  std::exponential_distribution<float> freqDis(frequencySkew);
+  std::exponential_distribution<float> gainDis(gainSkew);
 
   for (size_t i = 0; i < frequency_hz.size(); i++) {
     frequency_hz.at(i) = freqDis(gen) * 20000.0f;
@@ -55,8 +77,6 @@ int main() {
     delta.at(i) = 2.0f * frequency_hz.at(i) * float(M_PI / device->get_sample_rate()); 
   }
   
-
-
   device->connect([=](audio_device&, audio_device_io<float>& io) mutable noexcept {
     if (!io.output_buffer.has_value())
       return;
@@ -79,5 +99,23 @@ int main() {
   });
 
   device->start();
-  std::this_thread::sleep_for(std::chrono::seconds(5));
+  if(duration > 0)
+  {
+    std::this_thread::sleep_for(std::chrono::seconds(duration));
+  } 
+  else
+  {
+    while (true) {
+      std::string command;
+      std::cin >> command;
+
+      if (command == "q") {
+        break;
+      }
+      if (command == "s") {
+        break;
+      }
+    }
+  }
+  
 }

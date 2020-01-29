@@ -15,3 +15,7 @@ Generate makefiles
 
 Compile
 `make hundred_operator`
+
+*OR*
+
+In Visual Studio Code. Run the build task.

@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
   std::exponential_distribution<float> gainDis(gainSkew);
 
   for (size_t i = 0; i < frequency_hz.size(); i++) {
-    frequency_hz.at(i) = freqDis(gen) * 20000.0f;
+    frequency_hz.at(i) = freqDis(gen) * 15000.0f;
     gains.at(i) = gainDis(gen);
   } 
 

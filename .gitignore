@@ -1,8 +1,6 @@
 .idea
-build*
+build/*
 .DS_Store
-/.vs
-CMakeFiles
 CMakeCache.txt
 Makefile
 cmake_install.cmake
